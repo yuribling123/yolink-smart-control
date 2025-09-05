@@ -3,7 +3,7 @@ let ACCESS_TOKEN: string | null = null;
 const API = "https://api.yosmart.com/open/yolink/token";
 
 // fetch a new token
-export async function getToken(): Promise<string> {
+export async function getToken() {
   const res = await fetch(API, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -19,7 +19,7 @@ export async function getToken(): Promise<string> {
 }
 
 // ensure we have a token
-export async function ensureToken(): Promise<string> {
+export async function ensureToken(){
   if (!ACCESS_TOKEN) {
     return getToken();
   }
