@@ -1,17 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { controlPlug } from "@/services/plug";
 
-
 export async function POST(
-  req: NextRequest,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  context: { params: { id: string } }
 ) {
-  const { state }: { state: "open" | "close" } = await req.json();
+  const { id } = context.params;
 
-  const result = await controlPlug(params.id, state);
+  // body parsing
+  const { state }: { state: "open" | "close" } = await request.json();
 
-  return NextResponse.json({
-    result,
-  });
+  const result = await controlPlug(id, state);
 
+  return NextResponse.json({ result });
 }
