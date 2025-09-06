@@ -32,7 +32,7 @@ export default function Home() {
   })
     .then(async (res) => {
       const data = await res.json();
-      toast.success("success");
+      toast.success(newState ? "turned ON" : "turned OFF");
     })
     .catch((e) => {
       toast.error(`failed: ${e.message}`);
