@@ -14,7 +14,7 @@ export default function Home() {
       const res = await fetch("/api/devices");
       const data = await res.json();
       // Always use the first device (since you know it's a plug)
-      setDevice(data.data.devices[0]);
+      setDevice(data.data.devices[0] ?? null);
     }
 
     loadDevice();

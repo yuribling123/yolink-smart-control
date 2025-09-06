@@ -3,9 +3,10 @@ import { controlPlug } from "@/services/plug";
 
 export async function POST(
   request: NextRequest,
-  context: { params: { id: string } }
+  context: { params: Promise<{id: string}> }
 ) {
-  const { id } = context.params;
+  
+  const { id } = await context.params;
 
   // body parsing
   const { state }: { state: "open" | "close" } = await request.json();
