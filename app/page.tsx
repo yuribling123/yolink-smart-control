@@ -8,6 +8,7 @@ export default function Home() {
 
   const [device, setDevice] = useState<any | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [Message, setMessage] = useState<string>("");
 
   useEffect(() => {
     async function loadDevice() {
@@ -21,30 +22,56 @@ export default function Home() {
   }, []);
 
 
-  async function handleToggle(newState: boolean) {
-  if (!device) return;
-  setIsOpen(newState);
+  // 🔌 Subscribe to SSE
+  useEffect(() => {
+    const sse = new EventSource("/api/mqtt/event");
 
-  fetch(`/api/trigger/${device.deviceId}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ state: newState ? "open" : "close" }),
-  })
-    .then(async (res) => {
-      const data = await res.json();
-      toast.success(newState ? "turned ON" : "turned OFF");
+    sse.onmessage = (event) => {
+      setMessage(event.data); // save raw message
+      try {
+      } catch (err) {
+        console.error("Bad event:", event.data);
+      }
+    };
+
+    return () => sse.close();
+  }, [device?.deviceId]);
+
+
+
+
+
+
+
+  async function handleToggle(newState: boolean) {
+    if (!device) return;
+    setIsOpen(newState);
+
+    fetch(`/api/trigger/${device.deviceId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ state: newState ? "open" : "close" }),
     })
-    .catch((e) => {
-      toast.error(`failed: ${e.message}`);
-      setIsOpen(!newState); // revert if it failed
-    });
-}
+      .then(async (res) => {
+        const data = await res.json();
+        toast.success(newState ? "turned ON" : "turned OFF");
+      })
+      .catch((e) => {
+        toast.error(`failed: ${e.message}`);
+        setIsOpen(!newState); // revert if it failed
+      });
+  }
 
 
 
   return (
     <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
+        new signal:{Message && (
+          <pre className="bg-gray-100 p-3 rounded text-sm text-gray-700 max-w-lg overflow-x-auto">
+            {Message}
+          </pre>
+        )}
 
         {device ? (
           <>
@@ -53,7 +80,7 @@ export default function Home() {
 
             <div className="flex items-center">
               <span className="mr-3">Trigger :</span>
-              <Switch  checked={isOpen} onCheckedChange={handleToggle}/>
+              <Switch checked={isOpen} onCheckedChange={handleToggle} />
             </div>
           </>
         ) : (
