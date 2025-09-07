@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
   const stream = new ReadableStream({
     start(controller) {
       const send = (msg: string) => {
-        if (!alive) return; // stream has closed
+        if (!alive) return; // stream has close
         try {
           controller.enqueue(encoder.encode(`data: ${msg}\n\n`));
         } catch (e) {
