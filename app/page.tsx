@@ -5,9 +5,11 @@ import { toast } from "sonner";
 import Image from "next/image";
 
 export default function Home() {
-
+  const [isLoading, setIsLoading] = useState(false);
   const [device, setDevice] = useState<any | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [Message, setMessage] = useState<string>("");
+
 
   useEffect(() => {
     async function loadDevice() {
@@ -21,31 +23,63 @@ export default function Home() {
   }, []);
 
 
-  async function handleToggle(newState: boolean) {
-  if (!device) return;
-  setIsOpen(newState);
+  // 🔌 Subscribe to SSE
+  useEffect(() => {
+    const sse = new EventSource("/api/mqtt/event");
 
-  fetch(`/api/trigger/${device.deviceId}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ state: newState ? "open" : "close" }),
-  })
-    .then(async (res) => {
-      const data = await res.json();
-      toast.success(newState ? "turned ON" : "turned OFF");
+    sse.onmessage = (event) => {
+      setIsLoading(true); // stop loading on any event
+      const outer = JSON.parse(event.data);
+      const data = JSON.parse(outer.payload);
+
+      // Only update if this event is for our plug
+      if (data.deviceId === device?.deviceId) {
+        setIsOpen(data.data.state === "open");
+        setIsLoading(false)
+      }
+    };
+
+    return () => sse.close();
+  }, [device?.deviceId]);
+
+
+  useEffect(() => {
+    console.log("isOpen changed to:", isOpen);
+  }, [isOpen]);
+
+
+
+
+
+
+  async function handleToggle(newState: boolean) {
+    if (!device) return;
+    if (isLoading) return;
+    setIsLoading(true);
+    setIsOpen(newState);
+    fetch(`/api/trigger/${device.deviceId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ state: newState ? "open" : "close" }),
     })
-    .catch((e) => {
-      toast.error(`failed: ${e.message}`);
-      setIsOpen(!newState); // revert if it failed
-    });
-}
+      .then(async (res) => {
+        const data = await res.json();
+        toast.success(newState ? "turned ON" : "turned OFF");
+        setIsLoading(false);
+      })
+      .catch((e) => {
+        toast.error(`failed: ${e.message}`);
+        setIsLoading(false);
+        setIsOpen(!newState); // revert if it failed
+      });
+
+  }
 
 
 
   return (
     <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-
         {device ? (
           <>
             <div className="font-semibold text-gray-800">{device.name}</div>
@@ -53,7 +87,7 @@ export default function Home() {
 
             <div className="flex items-center">
               <span className="mr-3">Trigger :</span>
-              <Switch  checked={isOpen} onCheckedChange={handleToggle}/>
+              <Switch checked={isOpen} onCheckedChange={handleToggle} disabled={isLoading} />
             </div>
           </>
         ) : (

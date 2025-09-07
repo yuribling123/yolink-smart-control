@@ -15,7 +15,7 @@ const NavBar = () => {
                 return res.json();
             })
             .then((data) => {
-                setHomeName(data?.data?.id.slice(-4));
+                setHomeName(data?.data?.id.slice(-4)?? "N/A");
             })
             .catch((error) => {
                 console.error("Failed to fetch home data:", error);
