@@ -4,28 +4,29 @@ import { getDeviceList } from "@/services/devices";
 import { useEffect, useState } from "react";
 
 const NavBar = () => {
-    const [HomeName, setHomeName] = useState<string | undefined>(undefined);
+  const [HomeName, setHomeName] = useState<string | undefined>(undefined);
 
-    useEffect(() => {
-        fetch("/api/home")
-            .then((res) => {
-                if (!res.ok) {
-                    throw new Error(`HTTP error! Status: ${res.status}`);
-                }
-                return res.json();
-            })
-            .then((data) => {
-                setHomeName(data?.data?.id.slice(-4)?? "N/A");
-            })
-            .catch((error) => {
-                console.error("Failed to fetch home data:", error);
-            });
+  useEffect(() => {
+    fetch("/api/home")
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! Status: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then((data) => {
+        const homeId = data?.data?.id;
+        setHomeName(homeId ? homeId.slice(-4) : "");
+      })
+      .catch((error) => {
+        console.error("Failed to fetch home data:", error);
+      });
 
-    }, []);
+  }, []);
 
 
-    return (
-       <div
+  return (
+    <div
       className="
         sticky top-0 z-50
         flex items-center
@@ -46,7 +47,7 @@ const NavBar = () => {
       </span>
     </div>
 
-    );
+  );
 }
 
 export default NavBar;

@@ -35,8 +35,7 @@ export default function Home() {
           My Smart Home
         </span>
       </div>
-
-      {devices.length > 0 ? (
+      
         <div className="m-10 grid md:grid-cols-4 sm:grid-cols-2 lg:grid-cols-5 gap-4 ">
           {devices.map((device) => {
             switch (device.type) {
@@ -64,9 +63,7 @@ export default function Home() {
             }
           })}
         </div>
-      ) : (
-        null
-      )}
+    
     </>
 
 
