@@ -28,6 +28,10 @@ export async function GET(req: NextRequest) {
         }
       };
 
+      // 👇 Send an initial event immediately
+      controller.enqueue(encoder.encode(`data: {"status":"connected"}\n\n`));
+
+
       initMqtt(send);
 
       req.signal.addEventListener("abort", () => {

@@ -14,7 +14,7 @@ export default function Plug({ deviceId, name }: PlugProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const [isOn, setIsOn] = useState(false);
-     const [watt, setWatt] = useState(1200);
+    const [watt, setWatt] = useState(1200);
 
     // check power and state
     // 🔍 Initial check: power first, then state
@@ -47,6 +47,10 @@ export default function Plug({ deviceId, name }: PlugProps) {
 
         sse.onmessage = (event) => {
             const outer = JSON.parse(event.data);
+            if (outer.status === "connected") {
+                console.log("👋 connection start");
+                return;
+            }
             const data = JSON.parse(outer.payload);
 
             if (data.deviceId === deviceId) {

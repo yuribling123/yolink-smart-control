@@ -16,6 +16,10 @@ export default function MessageViewer() {
     sse.onmessage = (event) => {
       console.log("SSE message received:");
       const outer = JSON.parse(event.data);
+      if (outer.status === "connected") {
+        console.log("👋 connection start");
+        return;
+      }
       const inner = JSON.parse(outer.payload);
       setMessage(inner); // save raw message
     };
@@ -39,7 +43,7 @@ export default function MessageViewer() {
           </h2>
 
           {connected ? (
-            <Wifi size={20}  />
+            <Wifi size={20} />
           ) : (
             <WifiOff size={20} />
           )}

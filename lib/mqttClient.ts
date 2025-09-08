@@ -17,7 +17,7 @@ export async function connectMqtt() {
     });
 
     client.on('connect', function () {
-        console.log('Connected')
+        console.log('🟢 Connected')
         // console.log(client);
     })
 
