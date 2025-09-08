@@ -14,10 +14,15 @@ export default function Home() {
     async function loadDevice() {
       const res = await fetch("/api/devices");
       const data = await res.json();
-      setDevice(data.data.devices[0] ?? null);
+      if (data.data.devices && data.data.devices.length > 0){
+        setDevice(data.data.devices[0]);
+      }
+      else{
+        setDevice(null);
+      }
     }
     loadDevice();
-  }, []);
+  }, [device?.deviceId]);
 
 
   return (

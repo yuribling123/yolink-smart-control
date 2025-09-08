@@ -1,5 +1,6 @@
+import { controlPlug } from "@/services/outlet/plug";
 import { NextRequest, NextResponse } from "next/server";
-import { controlPlug } from "@/services/plug";
+
 
 export async function POST(
   request: NextRequest,

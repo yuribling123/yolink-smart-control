@@ -1,3 +1,4 @@
+import { getState } from "@/services/outlet/getState";
 import { NextResponse } from "next/server";
 
 
@@ -6,7 +7,7 @@ export async function GET(
   context: { params: Promise<{ id: string }> }
 ) {
   const { id } = await context.params;
-//   const state = await getPlugState(id);
+  const state = await getState(id);
 
-//   return NextResponse.json(state);
+  return NextResponse.json(state);
 }

@@ -1,10 +1,11 @@
-import { getToken } from "./token";
-import { getDeviceList } from "./devices";
-import { get } from "http";
+
+
+import { getToken } from "../token";
+import { getDeviceList } from "../devices";
 
 const API = "https://api.yosmart.com/open/yolink/v2/api"
 
-export async function controlPlug(deviceId: string, state: "open" | "close") {
+export async function getState(deviceId: string) {
     const ACCESS_TOKEN = await getToken();
     const devList = await getDeviceList();
     const DEVICE_TOKEN = devList.data.devices[0].token;
@@ -16,11 +17,10 @@ export async function controlPlug(deviceId: string, state: "open" | "close") {
             "Authorization": `Bearer ${ACCESS_TOKEN}`, // app-level JWT
         },
         body: JSON.stringify({
-            method: "Outlet.setState",
+            method: "Outlet.getState",
             time: Date.now(),
             targetDevice: deviceId,
             token: DEVICE_TOKEN, // ✅ must be the device token, not ACCESS_TOKEN
-            params: { state },   // "open" or "close"
         }),
     });
 
