@@ -46,7 +46,13 @@ export default function Plug({ deviceId, name }: PlugProps) {
         const sse = new EventSource("/api/mqtt/event");
 
         sse.onmessage = (event) => {
+            if (!event || !event.data) {
+                return;
+            }
             const outer = JSON.parse(event.data);
+            if (!outer.payload) {
+                return;
+            }
             const data = JSON.parse(outer.payload);
 
             if (data.deviceId === deviceId) {
