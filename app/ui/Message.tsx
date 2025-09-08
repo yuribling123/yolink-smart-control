@@ -20,7 +20,10 @@ export default function MessageViewer() {
         setConnected(false);
         return;
       }
-      const payload = JSON.parse(outer.payload);
+      const payload =
+        typeof outer.payload === "string"
+          ? JSON.parse(outer.payload)
+          : outer.payload;
       setConnected(true);
 
       // ✅ only set if not null/undefined
