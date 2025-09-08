@@ -20,9 +20,13 @@ export default function MessageViewer() {
         setConnected(false);
         return;
       }
-      const inner = JSON.parse(outer.payload);
+      const payload = JSON.parse(outer.payload);
       setConnected(true);
-      setMessage(inner); // save raw message
+
+      // ✅ only set if not null/undefined
+      if (payload?.deviceId && payload?.time && payload?.data?.state) {
+        setMessage(payload);
+      }
 
     };
 
@@ -63,7 +67,7 @@ export default function MessageViewer() {
             <p>
               <span className="font-medium text-gray-600">State:</span>{" "}
               <span
-                className="px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-200"
+                className="px-1 rounded-full text-xs font-semibold "
               >
                 {message.data.state}
               </span>
