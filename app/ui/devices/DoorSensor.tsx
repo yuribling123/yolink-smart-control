@@ -28,12 +28,11 @@ const DoorSensor = ({ deviceId, name }: DoorSensorProps) => {
 
     sse.onmessage = (event) => {
       try {
-        const outer = JSON.parse(event.data);
-        // payload may be a JSON string or already an object
-        const payload =
-          typeof outer.payload === "string"
-            ? JSON.parse(outer.payload)
-            : outer.payload;
+        if (!event.data) return; // stop if payload is undefined
+        const outer = JSON.parse(event.data);  
+        if (!outer.payload) return; 
+        const payload = JSON.parse(outer.payload)
+           
         if (payload.deviceId === deviceId && payload.event === "DoorSensor.Alert") {
           setOnLine(true)
           setisOpen(payload.data.state === "open");

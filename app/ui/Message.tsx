@@ -39,7 +39,7 @@ export default function MessageViewer() {
 
 
   return (
-    <div className="px-3">
+
       <div className="w-72 min-h-[160px] flex flex-col items-start m-6 bg-white border border-gray-200 rounded-2xl p-5 shadow-md">
         <div className="flex gap-2">
           <h2 className="font-semibold mb-4 text-gray-900 text-base">
@@ -53,8 +53,6 @@ export default function MessageViewer() {
           )}
 
         </div>
-
-
 
 
         {message ? (
@@ -79,7 +77,6 @@ export default function MessageViewer() {
         ) : (
           <p className="text-gray-400 text-sm italic">No messages yet...</p>
         )}
-      </div>
-    </div>
+      </div> 
   );
 }
