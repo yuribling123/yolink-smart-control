@@ -21,7 +21,7 @@ export default function Plug({ deviceId, name }: PlugProps) {
     useEffect(() => {
         async function fetchState() {
             try {
-                const res = await fetch(`/api/state/${deviceId}`);
+                const res = await fetch(`/api/plug/state/${deviceId}`);
                 const json = await res.json();
 
                 if (json.code === "000000") {
@@ -64,7 +64,7 @@ export default function Plug({ deviceId, name }: PlugProps) {
         setIsLoading(true);
         setIsOpen(newState);
 
-        fetch(`/api/trigger/${deviceId}`, {
+        fetch(`/api/plug/trigger/${deviceId}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ state: newState ? "open" : "close" }),

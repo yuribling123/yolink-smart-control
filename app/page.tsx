@@ -4,25 +4,27 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import Image from "next/image";
 import Plug from "./ui/devices/Plug";
+import DoorSensor from "./ui/devices/DoorSensor";
 
 export default function Home() {
-  const [device, setDevice] = useState<any | null>(null);
+  const [devices, setDevices] = useState<any[]>([]);
 
 
 
   useEffect(() => {
-    async function loadDevice() {
+    async function loadDevices() {
       const res = await fetch("/api/devices");
       const data = await res.json();
-      if (data.data.devices && data.data.devices.length > 0){
-        setDevice(data.data.devices[0]);
-      }
-      else{
-        setDevice(null);
+
+      if (data.data.devices && data.data.devices.length > 0) {
+        setDevices(data.data.devices);
+        console.log(data.data.devices[0]);
+      } else {
+        setDevices([]);
       }
     }
-    loadDevice();
-  }, [device?.deviceId]);
+    loadDevices();
+  }, []); // ✅ only run once on mount
 
 
   return (
@@ -34,15 +36,44 @@ export default function Home() {
         </span>
       </div>
 
-      {device ?
+      {devices.length > 0 ? (
         <div className="m-10 grid md:grid-cols-4 sm:grid-cols-2 lg:grid-cols-5 gap-4 ">
-          <Plug deviceId={device.deviceId} name={device.name} />
+          {devices.map((device) => {
+            switch (device.type) {
+              case "Outlet":
+                return (
+                  <Plug
+                    key={device.deviceId}
+                    deviceId={device.deviceId}
+                    name={device.name}
+                  />
+                );
 
-        </div> :
+              case "DoorSensor":
+                return (
+                  <DoorSensor
+                    key={device.deviceId}
+                    deviceId={device.deviceId}
+                    name={device.name}
+                    token={device.token}
+                  />
+                );
 
-        <></>}
-
+              default:
+                return null; // 👈 ignore unsupported device types for now
+            }
+          })}
+        </div>
+      ) : (
+        null
+      )}
     </>
+
+
+
+
+
+
 
 
   );
