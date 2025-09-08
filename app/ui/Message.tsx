@@ -1,19 +1,29 @@
 "use client";
+import { Wifi, WifiOff } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function MessageViewer() {
   const [message, setMessage] = useState<any>();
+  const [connected, setConnected] = useState(false);
 
   useEffect(() => {
     const sse = new EventSource("/api/mqtt/event");
+
+    sse.onopen = () => {
+      setConnected(true);
+    }
 
     sse.onmessage = (event) => {
       console.log("SSE message received:");
       const outer = JSON.parse(event.data);
       const inner = JSON.parse(outer.payload);
       setMessage(inner); // save raw message
-
     };
+
+    sse.onerror = (err) => {
+      console.error("SSE error:", err);
+      setConnected(false);
+    }
 
     return () => sse.close();
   }, []);
@@ -23,9 +33,21 @@ export default function MessageViewer() {
   return (
     <div className="px-3">
       <div className="w-72 min-h-[160px] flex flex-col items-start m-6 bg-white border border-gray-200 rounded-2xl p-5 shadow-md">
-        <h2 className="font-semibold mb-4 text-gray-900 text-base">
-          Message Box
-        </h2>
+        <div className="flex gap-2">
+          <h2 className="font-semibold mb-4 text-gray-900 text-base">
+            Message Box
+          </h2>
+
+          {connected ? (
+            <Wifi size={20}  />
+          ) : (
+            <WifiOff size={20} />
+          )}
+
+        </div>
+
+
+
 
         {message ? (
           <div className="flex flex-col gap-2 text-sm text-gray-700">
@@ -40,10 +62,7 @@ export default function MessageViewer() {
             <p>
               <span className="font-medium text-gray-600">State:</span>{" "}
               <span
-                className={`px-2 py-0.5 rounded-full text-xs font-semibold ${message.data.state === "open"
-                  ? "bg-green-100 text-green-700"
-                  : "bg-red-100 text-red-700"
-                  }`}
+                className="px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-200"
               >
                 {message.data.state}
               </span>
