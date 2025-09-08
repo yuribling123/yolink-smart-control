@@ -94,9 +94,9 @@ export default function Plug({ deviceId, name }: PlugProps) {
 
             <p className="text-sm text-gray-500">ID: {deviceId}</p>
             {isOn ? <Switch checked={isOpen} onCheckedChange={handleToggle} disabled={isLoading || !isOn} /> : (
-                <div className="  bg-red-400 text-white text-xs px-2 py-1 rounded-full top-10 right-10">
+                <p className="px-3 py-1 rounded-full text-xs font-medium border bg-gray-100 text-gray-500 ">
                     Offline
-                </div>
+                </p>
             )}
 
         </div>
