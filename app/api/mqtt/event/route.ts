@@ -3,15 +3,32 @@ import { connectMqtt } from "@/lib/mqttClient";
 
 function initMqtt(send: (msg: string) => void) {
   connectMqtt().then((client) => {
+    // 🟢 MQTT connected
+    client.on("connect", () => {
+      send(JSON.stringify({ status: "mqtt_connected" }));
+    });
+
+    // 🔴 MQTT error
+    client.on("error", (err) => {
+      send(JSON.stringify({ status: "mqtt_error", error: err.message }));
+    });
+
+    // ⚪️ MQTT disconnected
+    client.on("close", () => {
+      send(JSON.stringify({ status: "mqtt_disconnected" }));
+    });
+
+    // 📩 Device messages
     client.on("message", (topic, message) => {
       const payload = JSON.stringify({
         topic,
         payload: message.toString(),
       });
-      send(payload); // 👈 directly call the one listener
+      send(payload);
     });
   });
 }
+
 
 export async function GET(req: NextRequest) {
   const encoder = new TextEncoder();
@@ -28,10 +45,7 @@ export async function GET(req: NextRequest) {
         }
       };
 
-      // 👇 Send an initial event immediately
-      controller.enqueue(encoder.encode(`data: {"status":"connected"}\n\n`));
-
-
+   
       initMqtt(send);
 
       req.signal.addEventListener("abort", () => {

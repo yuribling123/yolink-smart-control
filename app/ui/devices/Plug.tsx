@@ -47,10 +47,6 @@ export default function Plug({ deviceId, name }: PlugProps) {
 
         sse.onmessage = (event) => {
             const outer = JSON.parse(event.data);
-            if (outer.status === "connected") {
-                console.log("👋 connection start");
-                return;
-            }
             const data = JSON.parse(outer.payload);
 
             if (data.deviceId === deviceId) {

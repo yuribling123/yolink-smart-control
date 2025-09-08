@@ -29,8 +29,8 @@ export async function connectMqtt() {
     // log every message received
     client.on("message", (topic, message) => {
         console.log("📩 Incoming MQTT Message");
-        console.log("  Topic:", topic);
-        console.log("  Payload:", message.toString());
+        console.log("Topic:",topic);
+        console.log("Payload:",message.toString());
     });
 
 

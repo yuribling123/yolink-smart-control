@@ -9,25 +9,22 @@ export default function MessageViewer() {
   useEffect(() => {
     const sse = new EventSource("/api/mqtt/event");
 
-    sse.onopen = () => {
-      setConnected(true);
-    }
-
     sse.onmessage = (event) => {
-      console.log("SSE message received:");
       const outer = JSON.parse(event.data);
-      if (outer.status === "connected") {
-        console.log("👋 connection start");
+      // connection check
+      if (outer.status === "mqtt_connected") {
+        setConnected(true);
+        return;
+      }
+      if (outer.status === "mqtt_error" || outer.status === "mqtt_disconnected") {
+        setConnected(false);
         return;
       }
       const inner = JSON.parse(outer.payload);
+      setConnected(true);
       setMessage(inner); // save raw message
-    };
 
-    sse.onerror = (err) => {
-      console.error("SSE error:", err);
-      setConnected(false);
-    }
+    };
 
     return () => sse.close();
   }, []);
