@@ -25,18 +25,26 @@ const NavBar = () => {
 
 
     return (
-        <div className="py-5 backdrop-blur-sm bg-white/30 sticky top-0 z-50 border-b border-gray-200 dark:border-gray-700 flex items-center px-5">
-            {/* Brand name */}
-            <span className="text-xl font-bold tracking-wide">
-                Yolink
-            </span>
+       <div
+      className="
+        sticky top-0 z-50
+        flex items-center
+        px-9 py-6
+        bg-gray-2 dark:bg-gray-900/50
+        backdrop-blur-md
+        border-b border-gray-200/50 dark:border-gray-700/50
+      "
+    >
+      {/* Brand name */}
+      <span className="text-xl font-bold tracking-wide text-cyan-900 dark:text-white">
+        YoLink
+      </span>
 
-            {/* Username on far right */}
-            <span className="ml-auto text-gray-700 dark:text-gray-200 font-medium">
-                Welcome Home, ID : **{HomeName ?? "Loading..."}
-            </span>
-
-        </div>
+      {/* Username on far right */}
+      <span className="ml-auto text-gray-700 dark:text-gray-200 font-medium">
+        Welcome Home, ID : **{HomeName ?? "Loading..."}
+      </span>
+    </div>
 
     );
 }
