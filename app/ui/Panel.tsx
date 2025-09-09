@@ -9,9 +9,6 @@ const Panel = ({ devices }: PanelProps) => {
   // Find devices dynamically
 
 
-
-
-
   useEffect(() => {
     const sse = new EventSource("/api/mqtt/event");
 
@@ -26,17 +23,16 @@ const Panel = ({ devices }: PanelProps) => {
       }
       const payload = JSON.parse(outer.payload);
 
-      console.log("panel received")
-      console.log(isEnabled)
-      console.log(payload.event)
-      console.log(payload.data?.state)
-
       if (isEnabled && payload.event == "DoorSensor.Alert" && payload.data?.state == "closed") {
         const plug = devices.find(d => d.type === "Outlet")
         const plug_id = plug.deviceId
-        console.log("inside")
-        console.log("plug_id:", plug_id);
         turnOffPlug(plug_id)
+      }
+      else if (isEnabled && payload.event == "DoorSensor.Alert" && payload.data?.state == "open") {
+        const plug = devices.find(d => d.type === "Outlet")
+        const plug_id = plug.deviceId
+        turnOnPlug(plug_id)
+
       }
 
     };
@@ -55,8 +51,16 @@ const Panel = ({ devices }: PanelProps) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ state: "close" }),
     });
-
   }
+
+  function turnOnPlug(plugId: string) {
+    fetch(`/api/plug/trigger/${plugId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ state: "open" }),
+    });
+  }
+
 
 
 
