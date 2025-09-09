@@ -46,7 +46,9 @@ const DeviceList = ({ devices }: DeviceListProps) => {
                     })}
                 </div>
             ) : (
-                <p className="m-10 text-gray-400 text-sm italic">No devices found</p>
+                <div className="m-10 flex items-center justify-center min-h-[200px]">
+                    <p className="text-gray-400 text-sm italic">wait</p>
+                </div>
             )}
         </>
     );
