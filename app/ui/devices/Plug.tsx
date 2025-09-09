@@ -24,15 +24,17 @@ export default function Plug({ deviceId, name }: PlugProps) {
                 setIsLoading(true)
                 const res = await fetch(`/api/plug/state/${deviceId}`);
                 const json = await res.json();
-                if (json.code === "000201" || json.code === "020104") { //off line or busy message
+                if (json.code === "000201" ) { //off line or busy (020104)message
                     setIsOnLine(false);
                     setIsLoading(false)
                     return
                 }
                 setIsOnLine(true)
+                setIsOpen(json.data.state === "open")
                 setIsLoading(false)
             } catch (err) {
                 console.error("Failed to fetch plug state", err);
+                setIsLoading(false)
             }
         }
         fetchState();
@@ -52,6 +54,7 @@ export default function Plug({ deviceId, name }: PlugProps) {
                 setIsOpen(data.data.state === "open");
                 setIsLoading(false);
             }
+            setIsLoading(false);
         };
 
         return () => {
@@ -72,13 +75,13 @@ export default function Plug({ deviceId, name }: PlugProps) {
         })
             .then(async (res) => {
                 const json = await res.json();
-                if (!res.ok) {
-                    throw new Error(json.error);
+                if (json.result.desc !="Success" ) {
+                    throw new Error(json.result.desc);
                 }
                 toast.success(newState ? "Turned ON" : "Turned OFF");
             })
             .catch((e) => {
-                toast.error(`failed: ${e.message}`);
+                toast.error(e.message);
                 setIsOpen(!newState); // revert if failed
             })
             .finally(() => setIsLoading(false));
