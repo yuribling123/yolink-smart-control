@@ -1,3 +1,4 @@
+"use client"
 import { DoorOpen, DoorClosed, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -5,23 +6,34 @@ import { toast } from "sonner";
 interface DoorSensorProps {
   deviceId: string;
   name: string;
-  token: string;
 }
 
 const DoorSensor = ({ deviceId, name }: DoorSensorProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [onLine, setOnLine] = useState<boolean>(false);
+  const [IsOnLine, setIsOnLine] = useState<boolean>(true);
   const [isOpen, setisOpen] = useState<boolean>(false);
 
 
   useEffect(() => {
     async function loadState() {
-      setIsLoading(true)
-      const res = await fetch(`/api/door/censor/state/${deviceId}`);
-      const json = await res.json();
-      setOnLine(json.data?.online);
-      setisOpen(json.data?.state?.state === "open");
-      setIsLoading(false)
+      try {
+        setIsLoading(true)
+        console.log("json")
+        const res = await fetch(`/api/door/censor/state/${deviceId}`);
+        const json = await res.json();
+        if (json.code === "000201" || json.code === "020104") { //off line or busy (020104)message
+          console.log("json",json)
+          console.log("here",json.code)
+          setIsOnLine(false);
+          return;
+        }
+
+        setIsOnLine(json.data?.online);
+        setisOpen(json.data?.state?.state === "open");
+
+      } finally {
+        setIsLoading(false);
+      }
     }
     loadState();
   }, [deviceId]);
@@ -36,13 +48,12 @@ const DoorSensor = ({ deviceId, name }: DoorSensorProps) => {
         const outer = JSON.parse(event.data);
         const payload = JSON.parse(outer.payload)
         if (payload.deviceId === deviceId && payload.event === "DoorSensor.Alert") {
-          setOnLine(true)
+          setIsOnLine(true)
           setisOpen(payload.data.state === "open");
-          setIsLoading(false)
         }
-        setIsLoading(false)
       } catch (e) {
-        toast.error("failed");
+      }
+      finally{
         setIsLoading(false)
       }
     };
@@ -79,7 +90,7 @@ const DoorSensor = ({ deviceId, name }: DoorSensorProps) => {
         :
         <>
 
-          {onLine ? (
+          {IsOnLine ? (
             <p
               className={`px-3 py-1 rounded-full text-xs font-medium border ${isOpen
                 ? "bg-white text-black border-gray-400"

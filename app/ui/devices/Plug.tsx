@@ -24,16 +24,16 @@ export default function Plug({ deviceId, name }: PlugProps) {
                 setIsLoading(true)
                 const res = await fetch(`/api/plug/state/${deviceId}`);
                 const json = await res.json();
-                if (json.code === "000201" ) { //off line or busy (020104)message
+                if (json.code === "000201") { //off line or busy (020104)message
                     setIsOnLine(false);
-                    setIsLoading(false)
                     return
                 }
                 setIsOnLine(true)
                 setIsOpen(json.data.state === "open")
-                setIsLoading(false)
             } catch (err) {
-                console.error("Failed to fetch plug state", err);
+                console.log(err)
+            }
+            finally {
                 setIsLoading(false)
             }
         }
@@ -46,15 +46,23 @@ export default function Plug({ deviceId, name }: PlugProps) {
     useEffect(() => {
         const sse = new EventSource("/api/mqtt/event");
         sse.onmessage = (event) => {
-            setIsLoading(true);
-            const outer = JSON.parse(event.data);
-            const data = JSON.parse(outer.payload);
-            if (data.deviceId === deviceId) {
-                setIsOnLine(true)
-                setIsOpen(data.data.state === "open");
+            try {
+                setIsLoading(true);
+                const outer = JSON.parse(event.data);
+                const data = JSON.parse(outer.payload);
+                if (data.deviceId === deviceId) {
+                    setIsOnLine(true)
+                    setIsOpen(data.data.state === "open");
+                }
                 setIsLoading(false);
             }
-            setIsLoading(false);
+            catch (e) {
+
+            }
+            finally {
+                setIsLoading(false)
+            }
+
         };
 
         return () => {
@@ -75,7 +83,7 @@ export default function Plug({ deviceId, name }: PlugProps) {
         })
             .then(async (res) => {
                 const json = await res.json();
-                if (json.result.desc !="Success" ) {
+                if (json.result.desc != "Success") {
                     throw new Error(json.result.desc);
                 }
                 toast.success(newState ? "Turned ON" : "Turned OFF");
