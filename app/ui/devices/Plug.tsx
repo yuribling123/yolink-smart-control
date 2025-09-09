@@ -2,7 +2,7 @@
 import { Switch } from "@/components/ui/switch";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { InfoIcon, Plug as PlugIcon } from "lucide-react";
+import { InfoIcon, Loader2, Plug as PlugIcon } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface PlugProps {
@@ -13,7 +13,7 @@ interface PlugProps {
 export default function Plug({ deviceId, name }: PlugProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
-    const [isOn, setIsOn] = useState(false);
+    const [isOnLine, setIsOnLine] = useState(true);
     const [watt, setWatt] = useState(1200);
 
     // check power and state
@@ -21,19 +21,20 @@ export default function Plug({ deviceId, name }: PlugProps) {
     useEffect(() => {
         async function fetchState() {
             try {
+                setIsLoading(true)
                 const res = await fetch(`/api/plug/state/${deviceId}`);
                 const json = await res.json();
-
-                if (json.code === "000000") {
-                    const power = json.data?.power ?? 0;
-                    const watt = json.data?.watt ?? 0;
-                    const state = json.data?.state;
-                    setIsOn(true);
-                    setIsOpen(state === "open");;
+                if (json.code === "000201") { //off line or busy (020104)message
+                    setIsOnLine(false);
+                    return
                 }
-
+                setIsOnLine(true)
+                setIsOpen(json.data.state === "open")
             } catch (err) {
-                console.error("Failed to fetch plug state", err);
+                console.log(err)
+            }
+            finally {
+                setIsLoading(false)
             }
         }
         fetchState();
@@ -41,28 +42,33 @@ export default function Plug({ deviceId, name }: PlugProps) {
 
 
 
-    // 🔌 Subscribe to SSE
+    // 🔌 Subscribe to SSE (listen to on/off or is online message)
     useEffect(() => {
         const sse = new EventSource("/api/mqtt/event");
-
         sse.onmessage = (event) => {
-            if (!event || !event.data) {
-                return;
-            }
-            const outer = JSON.parse(event.data);
-            if (!outer.payload) {
-                return;
-            }
-            const data = JSON.parse(outer.payload);
-
-            if (data.deviceId === deviceId) {
-                setIsOn(true)
-                setIsOpen(data.data.state === "open");
+            try {
+                setIsLoading(true);
+                const outer = JSON.parse(event.data);
+                const data = JSON.parse(outer.payload);
+                if (data.deviceId === deviceId) {
+                    setIsOnLine(true)
+                    setIsOpen(data.data.state === "open");
+                }
                 setIsLoading(false);
             }
+            catch (e) {
+
+            }
+            finally {
+                setIsLoading(false)
+            }
+
         };
 
-        return () => sse.close();
+        return () => {
+            sse.close(); // cleanup on unmount
+        };
+        ;
     }, [deviceId]);
 
     async function handleToggle(newState: boolean) {
@@ -76,11 +82,14 @@ export default function Plug({ deviceId, name }: PlugProps) {
             body: JSON.stringify({ state: newState ? "open" : "close" }),
         })
             .then(async (res) => {
-                await res.json();
+                const json = await res.json();
+                if (json.result.desc != "Success") {
+                    throw new Error(json.result.desc);
+                }
                 toast.success(newState ? "Turned ON" : "Turned OFF");
             })
             .catch((e) => {
-                toast.error(`failed: ${e.message}`);
+                toast.error(e.message);
                 setIsOpen(!newState); // revert if failed
             })
             .finally(() => setIsLoading(false));
@@ -99,11 +108,20 @@ export default function Plug({ deviceId, name }: PlugProps) {
 
 
             <p className="text-sm text-gray-500">ID: {deviceId}</p>
-            {isOn ? <Switch checked={isOpen} onCheckedChange={handleToggle} disabled={isLoading || !isOn} /> : (
-                <p className="px-3 py-1 rounded-full text-xs font-medium border bg-gray-100 text-gray-500 ">
-                    Offline
-                </p>
-            )}
+
+            {isLoading ? <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
+                :
+                <>
+
+                    {isOnLine ? <Switch checked={isOpen} onCheckedChange={handleToggle} disabled={isLoading || !isOnLine} /> : (
+                        <p className="px-3 py-1 rounded-full text-xs font-medium border bg-gray-100 text-gray-500 ">
+                            Offline
+                        </p>
+                    )}
+
+
+                </>}
+
 
         </div>
 

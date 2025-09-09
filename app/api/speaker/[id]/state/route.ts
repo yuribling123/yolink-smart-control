@@ -1,4 +1,5 @@
-import { getState } from "@/services/doorSensor/getState";
+
+import { getState } from "@/services/speakerHub/getState";
 import { NextResponse } from "next/server";
 
 
@@ -12,14 +13,11 @@ export async function GET(
     const state = await getState(id);
 
     return NextResponse.json(state);
-  }
-  catch (e: any) {
+  } catch (e: any) {
 
     return NextResponse.json(
       { success: false, error: e.message || "Error" },
       { status: 500 }
     )
-
   }
-
 }

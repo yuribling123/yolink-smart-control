@@ -1,6 +1,7 @@
 "use client";
 import Plug from "./Plug";
 import DoorSensor from "./DoorSensor";
+import SpeakerHub from "./SpeakerHub";
 
 interface DeviceListProps {
     devices: any[];
@@ -35,8 +36,16 @@ const DeviceList = ({ devices }: DeviceListProps) => {
                                     <DoorSensor
                                         key={device.deviceId}
                                         deviceId={device.deviceId}
+                                        name={device.name}   
+                                    />
+                                );
+
+                            case "SpeakerHub":
+                                return (
+                                    <SpeakerHub
+                                        key={device.deviceId}
+                                        deviceId={device.deviceId}
                                         name={device.name}
-                                        token={device.token}
                                     />
                                 );
 
@@ -46,7 +55,9 @@ const DeviceList = ({ devices }: DeviceListProps) => {
                     })}
                 </div>
             ) : (
-                <p className="m-10 text-gray-400 text-sm italic">No devices found</p>
+                <div className="m-10 flex items-center justify-center min-h-[200px]">
+                    <p className="text-gray-400 text-sm italic">wait</p>
+                </div>
             )}
         </>
     );
