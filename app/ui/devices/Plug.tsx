@@ -46,7 +46,7 @@ export default function Plug({ deviceId, name }: PlugProps) {
         const sse = new EventSource("/api/mqtt/event");
 
         sse.onmessage = (event) => {
-            if (!event || !event.data) {
+            if (!event.data) {
                 return;
             }
             const outer = JSON.parse(event.data);
@@ -62,7 +62,10 @@ export default function Plug({ deviceId, name }: PlugProps) {
             }
         };
 
-        return () => sse.close();
+        return () => {
+            sse.close(); // cleanup on unmount
+        };
+        ;
     }, [deviceId]);
 
     async function handleToggle(newState: boolean) {

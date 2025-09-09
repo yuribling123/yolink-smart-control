@@ -29,10 +29,10 @@ const DoorSensor = ({ deviceId, name }: DoorSensorProps) => {
     sse.onmessage = (event) => {
       try {
         if (!event.data) return; // stop if payload is undefined
-        const outer = JSON.parse(event.data);  
-        if (!outer.payload) return; 
+        const outer = JSON.parse(event.data);
+        if (!outer.payload) return;
         const payload = JSON.parse(outer.payload)
-           
+
         if (payload.deviceId === deviceId && payload.event === "DoorSensor.Alert") {
           setOnLine(true)
           setisOpen(payload.data.state === "open");
@@ -40,6 +40,10 @@ const DoorSensor = ({ deviceId, name }: DoorSensorProps) => {
       } catch (err) {
         console.error("❌ Failed to parse SSE message:", err, event.data);
       }
+    };
+
+    return () => {
+      sse.close(); // cleanup on unmount
     };
 
 
@@ -68,8 +72,8 @@ const DoorSensor = ({ deviceId, name }: DoorSensorProps) => {
       {onLine ? (
         <p
           className={`px-3 py-1 rounded-full text-xs font-medium border ${isOpen
-              ? "bg-white text-black border-gray-400"
-              : "bg-gray-200 text-gray-700 border-gray-400"
+            ? "bg-white text-black border-gray-400"
+            : "bg-gray-200 text-gray-700 border-gray-400"
             }`}
         >
           {isOpen ? "Open" : "Closed"}
