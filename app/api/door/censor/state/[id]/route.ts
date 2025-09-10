@@ -9,9 +9,9 @@ export async function GET(
 
   try {
     const { id } = await context.params;
-    const state = await getState(id);
+    const result = await getState(id);
 
-    return NextResponse.json(state);
+    return NextResponse.json(result);
   }
   catch (e: any) {
 

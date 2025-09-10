@@ -65,6 +65,24 @@ const SpeakerHub = ({ deviceId, name }: SpeakerHubProps) => {
 
   // }, [deviceId]);
 
+  async function play() {
+    try {
+      setIsLoading(true);
+
+      const res = await fetch(`/api/speaker/${deviceId}/play`);
+
+      const json = await res.json();
+
+      if (json.desc !== "Success") {
+        throw new Error(json.result?.des);
+      }
+      toast.success("Playing audio...");
+    } catch (e: any) {
+      toast.error(e.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
 
 
@@ -90,7 +108,7 @@ const SpeakerHub = ({ deviceId, name }: SpeakerHubProps) => {
           {isOnLine ? (
             <>
 
-              {isMute ? <VolumeX size={24} color="red" /> : <Volume2 size={24} />}
+              {isMute ? <VolumeX size={24} color="red" /> : <Volume2 size={24} onClick={play} className="cursor-pointer hover:text-blue-800" />}
 
             </>
 
