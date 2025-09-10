@@ -1,6 +1,7 @@
 let ACCESS_TOKEN: string | null = null;
 
-const API = "https://api.yosmart.com/open/yolink/token";
+const API = process.env.YOLINK_TOKEN!;
+
 
 // fetch a new token
 export async function getToken() {

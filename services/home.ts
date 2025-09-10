@@ -1,7 +1,6 @@
 import { ensureToken } from "./token";
 
-
-const API = "https://api.yosmart.com/open/yolink/v2/api";
+const API = process.env.YOLINK_API!;
 
 export async function getHome() {
   const token = await ensureToken();

@@ -1,7 +1,7 @@
 import { getDeviceList } from "../devices";
 import { getToken } from "../token";
 
-const API = "https://api.yosmart.com/open/yolink/v2/api";
+const API = process.env.YOLINK_API!;
 
 export async function play(deviceId: string) {
     const ACCESS_TOKEN = await getToken();
