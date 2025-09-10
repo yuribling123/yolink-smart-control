@@ -27,7 +27,7 @@ export async function play(deviceId: string) {
             token: device.token,          // SpeakerHub token
             params: {
                 tone: "Alert",              // one of: "Emergency", "Alert", "Warn", "Tip"
-                message: "i am stupid",    // optional TTS message
+                message: "welcome",    // optional TTS message
                 volume: 5,                  // optional (use 1–10)
                 repeat: 0                  // optional (0–10)
             }
