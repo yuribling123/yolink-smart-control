@@ -1,4 +1,5 @@
 "use client"
+import { useDeviceStore } from "@/store/DeviceStore";
 import { DoorOpen, DoorClosed, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -11,25 +12,29 @@ interface DoorSensorProps {
 const DoorSensor = ({ deviceId, name }: DoorSensorProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [IsOnLine, setIsOnLine] = useState<boolean>(true);
-  const [isOpen, setisOpen] = useState<boolean>(false);
+
+  const device = useDeviceStore((store) => store.devices[deviceId]);
+  const isOpen = device?.state === "open";
 
 
   useEffect(() => {
     async function loadState() {
       try {
         setIsLoading(true)
-        console.log("json")
         const res = await fetch(`/api/door/censor/state/${deviceId}`);
         const json = await res.json();
+
         if (json.code === "000201" || json.code === "020104") { //off line or busy (020104)message
-          console.log("json",json)
-          console.log("here",json.code)
           setIsOnLine(false);
           return;
         }
 
         setIsOnLine(json.data?.online);
-        setisOpen(json.data?.state?.state === "open");
+        useDeviceStore.getState().updateDevice(deviceId, {
+          id: deviceId,
+          type: "DoorSensor",
+          state: json.data?.state?.state, // "open" or "closed"
+        });
 
       } finally {
         setIsLoading(false);
@@ -37,39 +42,6 @@ const DoorSensor = ({ deviceId, name }: DoorSensorProps) => {
     }
     loadState();
   }, [deviceId]);
-
-
-  useEffect(() => {
-    const sse = new EventSource("/api/mqtt/event");
-
-    sse.onmessage = (event) => {
-      try {
-        setIsLoading(true)
-        const outer = JSON.parse(event.data);
-        const payload = JSON.parse(outer.payload)
-        if (payload.deviceId === deviceId && payload.event === "DoorSensor.Alert") {
-          setIsOnLine(true)
-          setisOpen(payload.data.state === "open");
-        }
-      } catch (e) {
-      }
-      finally{
-        setIsLoading(false)
-      }
-    };
-
-    return () => {
-      sse.close(); // cleanup on unmount
-    };
-
-
-  }, [deviceId]);
-
-
-
-
-
-
 
 
   return (

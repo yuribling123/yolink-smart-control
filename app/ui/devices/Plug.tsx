@@ -43,33 +43,33 @@ export default function Plug({ deviceId, name }: PlugProps) {
 
 
     // 🔌 Subscribe to SSE (listen to on/off or is online message)
-    useEffect(() => {
-        const sse = new EventSource("/api/mqtt/event");
-        sse.onmessage = (event) => {
-            try {
-                setIsLoading(true);
-                const outer = JSON.parse(event.data);
-                const data = JSON.parse(outer.payload);
-                if (data.deviceId === deviceId) {
-                    setIsOnLine(true)
-                    setIsOpen(data.data.state === "open");
-                }
-                setIsLoading(false);
-            }
-            catch (e) {
+    // useEffect(() => {
+    //     const sse = new EventSource("/api/mqtt/event");
+    //     sse.onmessage = (event) => {
+    //         try {
+    //             setIsLoading(true);
+    //             const outer = JSON.parse(event.data);
+    //             const data = JSON.parse(outer.payload);
+    //             if (data.deviceId === deviceId) {
+    //                 setIsOnLine(true)
+    //                 setIsOpen(data.data.state === "open");
+    //             }
+    //             setIsLoading(false);
+    //         }
+    //         catch (e) {
 
-            }
-            finally {
-                setIsLoading(false)
-            }
+    //         }
+    //         finally {
+    //             setIsLoading(false)
+    //         }
 
-        };
+    //     };
 
-        return () => {
-            sse.close(); // cleanup on unmount
-        };
-        ;
-    }, [deviceId]);
+    //     return () => {
+    //         sse.close(); // cleanup on unmount
+    //     };
+    //     ;
+    // }, [deviceId]);
 
     async function handleToggle(newState: boolean) {
         if (isLoading) return;

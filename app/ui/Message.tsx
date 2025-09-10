@@ -6,35 +6,35 @@ export default function MessageViewer() {
   const [message, setMessage] = useState<any>();
   const [connected, setConnected] = useState(false);
 
-  useEffect(() => {
-    const sse = new EventSource("/api/mqtt/event");
+  // useEffect(() => {
+  //   const sse = new EventSource("/api/mqtt/event");
 
-    sse.onmessage = (event) => {
-      const outer = JSON.parse(event.data);
-      // connection check
-      if (outer.status === "mqtt_connected") {
-        setConnected(true);
-        return;
-      }
-      if (outer.status === "mqtt_error" || outer.status === "mqtt_disconnected") {
-        setConnected(false);
-        return;
-      }
-      const payload =
-        typeof outer.payload === "string"
-          ? JSON.parse(outer.payload)
-          : outer.payload;
-      setConnected(true);
+  //   sse.onmessage = (event) => {
+  //     const outer = JSON.parse(event.data);
+  //     // connection check
+  //     if (outer.status === "mqtt_connected") {
+  //       setConnected(true);
+  //       return;
+  //     }
+  //     if (outer.status === "mqtt_error" || outer.status === "mqtt_disconnected") {
+  //       setConnected(false);
+  //       return;
+  //     }
+  //     const payload =
+  //       typeof outer.payload === "string"
+  //         ? JSON.parse(outer.payload)
+  //         : outer.payload;
+  //     setConnected(true);
 
-      // ✅ only set if not null/undefined
-      if (payload?.deviceId && payload?.time && payload?.data?.state) {
-        setMessage(payload);
-      }
+  //     // ✅ only set if not null/undefined
+  //     if (payload?.deviceId && payload?.time && payload?.data?.state) {
+  //       setMessage(payload);
+  //     }
 
-    };
+  //   };
 
-    return () => sse.close();
-  }, []);
+  //   return () => sse.close();
+  // }, []);
 
 
 

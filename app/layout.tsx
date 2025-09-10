@@ -6,6 +6,8 @@ import NavBar from "./ui/Navbar";
 import MessageViewer from "./ui/Message";
 import Panel from "./ui/Panel";
 
+import { connectMqtt } from "@/lib/mqttClient";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -26,6 +28,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+ 
+    connectMqtt(); // connect once globally
+
+
   return (
     <html lang="en">
       <body
@@ -34,7 +41,7 @@ export default function RootLayout({
         <NavBar></NavBar>
 
         <Toaster></Toaster>
-        
+
         {children}
       </body>
     </html>

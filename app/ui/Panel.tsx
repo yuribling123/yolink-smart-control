@@ -9,39 +9,39 @@ const Panel = ({ devices }: PanelProps) => {
   // Find devices dynamically
 
 
-  useEffect(() => {
-    const sse = new EventSource("/api/mqtt/event");
+  // useEffect(() => {
+  //   const sse = new EventSource("/api/mqtt/event");
 
-    sse.onmessage = (event) => {
+  //   sse.onmessage = (event) => {
 
-      if (!event.data) {
-        return;
-      }
-      const outer = JSON.parse(event.data);
-      if (!outer.payload) {
-        return;
-      }
-      const payload = JSON.parse(outer.payload);
+  //     if (!event.data) {
+  //       return;
+  //     }
+  //     const outer = JSON.parse(event.data);
+  //     if (!outer.payload) {
+  //       return;
+  //     }
+  //     const payload = JSON.parse(outer.payload);
 
-      if (isEnabled && payload.event == "DoorSensor.Alert" && payload.data?.state == "closed") {
-        const plug = devices.find(d => d.type === "Outlet")
-        const plug_id = plug.deviceId
-        turnOffPlug(plug_id)
-      }
-      else if (isEnabled && payload.event == "DoorSensor.Alert" && payload.data?.state == "open") {
-        const plug = devices.find(d => d.type === "Outlet")
-        const plug_id = plug.deviceId
-        turnOnPlug(plug_id)
+  //     if (isEnabled && payload.event == "DoorSensor.Alert" && payload.data?.state == "closed") {
+  //       const plug = devices.find(d => d.type === "Outlet")
+  //       const plug_id = plug.deviceId
+  //       turnOffPlug(plug_id)
+  //     }
+  //     else if (isEnabled && payload.event == "DoorSensor.Alert" && payload.data?.state == "open") {
+  //       const plug = devices.find(d => d.type === "Outlet")
+  //       const plug_id = plug.deviceId
+  //       turnOnPlug(plug_id)
 
-      }
+  //     }
 
-    };
-    return () => {
-      sse.close(); // cleanup on unmount
-    };
+  //   };
+  //   return () => {
+  //     sse.close(); // cleanup on unmount
+  //   };
 
 
-  }, [isEnabled]);
+  // }, [isEnabled]);
 
 
 

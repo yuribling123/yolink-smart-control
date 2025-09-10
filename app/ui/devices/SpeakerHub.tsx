@@ -38,32 +38,7 @@ const SpeakerHub = ({ deviceId, name }: SpeakerHubProps) => {
     fetchState();
   }, [deviceId]);
 
-  // useEffect(() => {
-  //   const sse = new EventSource("/api/mqtt/event");
 
-  //   sse.onmessage = (event) => {
-  //     try {
-  //       setIsLoading(true)
-  //       const outer = JSON.parse(event.data);
-  //       const payload = JSON.parse(outer.payload)
-  //       // if (payload.deviceId === deviceId && payload.event === "SpeakerHub.Alert") {
-  //       //   setIsOnLine(true)
-
-  //       //   setIsLoading(false)
-  //       // }
-  //       setIsLoading(false)
-  //     } catch (e) {
-  //       console.log(e)
-  //       setIsLoading(false)
-  //     }
-  //   };
-
-  //   return () => {
-  //     sse.close(); // cleanup on unmount
-  //   };
-
-
-  // }, [deviceId]);
 
   async function play() {
     try {
