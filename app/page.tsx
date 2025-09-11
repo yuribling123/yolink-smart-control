@@ -8,6 +8,7 @@ import DoorSensor from "./ui/devices/DoorSensor";
 import DeviceList from "./ui/devices/DeviceList";
 import MessageViewer from "./ui/Message";
 import Panel from "./ui/Panel";
+import Listener from "@/components/sse/listener";
 
 export default function Home() {
   const [devices, setDevices] = useState<any[]>([]);
@@ -31,6 +32,7 @@ export default function Home() {
 
   return (
     <div>
+      <Listener /> 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 place-items-center">
         <MessageViewer />
         <Panel devices={devices} />
