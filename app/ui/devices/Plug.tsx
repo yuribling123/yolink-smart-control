@@ -93,6 +93,7 @@ export default function Plug({ deviceId, name }: PlugProps) {
                     throw new Error(json.result.desc);
                 }
                 updateDevice(deviceId,{state: newState? "open" : "closed"})
+                setIsOnLine(true)
                 toast.success(newState ? "Turned ON" : "Turned OFF");
             })
             .catch((e) => {
