@@ -8,6 +8,7 @@ interface DeviceListProps {
 }
 
 const DeviceList = ({ devices }: DeviceListProps) => {
+    console.log(devices)
     return (
         <>
             {/* Header */}

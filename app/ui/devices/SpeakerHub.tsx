@@ -14,7 +14,6 @@ const SpeakerHub = ({ deviceId, name }: SpeakerHubProps) => {
   const [isMute, setIsMute] = useState<boolean>(false);
 
 
-
   useEffect(() => {
     async function fetchState() {
       try {
@@ -25,7 +24,6 @@ const SpeakerHub = ({ deviceId, name }: SpeakerHubProps) => {
           setIsOnLine(false);
           return
         }
-
         setIsOnLine(true)
         setIsMute(json.data.options.mute)
         console.log(json)
@@ -38,39 +36,13 @@ const SpeakerHub = ({ deviceId, name }: SpeakerHubProps) => {
     fetchState();
   }, [deviceId]);
 
-  // useEffect(() => {
-  //   const sse = new EventSource("/api/mqtt/event");
 
-  //   sse.onmessage = (event) => {
-  //     try {
-  //       setIsLoading(true)
-  //       const outer = JSON.parse(event.data);
-  //       const payload = JSON.parse(outer.payload)
-  //       // if (payload.deviceId === deviceId && payload.event === "SpeakerHub.Alert") {
-  //       //   setIsOnLine(true)
-
-  //       //   setIsLoading(false)
-  //       // }
-  //       setIsLoading(false)
-  //     } catch (e) {
-  //       console.log(e)
-  //       setIsLoading(false)
-  //     }
-  //   };
-
-  //   return () => {
-  //     sse.close(); // cleanup on unmount
-  //   };
-
-
-  // }, [deviceId]);
 
   async function play() {
     try {
       setIsLoading(true);
 
       const res = await fetch(`/api/speaker/${deviceId}/play`);
-
       const json = await res.json();
 
       if (json.desc !== "Success") {
