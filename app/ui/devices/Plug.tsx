@@ -27,7 +27,7 @@ export default function Plug({ deviceId, name }: PlugProps) {
         async function fetchState() {
             try {
                 setIsLoading(true)
-                const res = await fetch(`/api/plug/state/${deviceId}`);
+                const res = await fetch(`/api/outlet/${deviceId}/state`);
                 const json = await res.json();
                 //offline
                 if (json.code === "000201") { //off line or busy (020104)message
@@ -52,7 +52,7 @@ export default function Plug({ deviceId, name }: PlugProps) {
         if (isLoading) return;
         setIsLoading(true);
 
-        fetch(`/api/plug/trigger/${deviceId}`, {
+        fetch(`/api/outlet/${deviceId}/action`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ state: newState ? "open" : "close" }),

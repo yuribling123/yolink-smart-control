@@ -37,35 +37,43 @@ export default function Listener({ devices }: ListenerProps) {
                 //load rules
                 // if (!enabled) return
                 console.log("now rule")
-                console.log("rules",rules)
+                console.log("rules", rules)
 
 
-                if(!enabled){return}
+                if (!enabled) { return }
                 rules.forEach(
 
                     (rule) => {
                         console.log("running rule")
-                        console.log("devices",devices)
+                        console.log("devices", devices)
                         if (rule.trigger.event == payload.event && rule.trigger.state == payload.data?.state) {
                             console.log("match run rule")
                             const target = devices.find((d) => d.type === rule.action.deviceType)
                             if (!target) return
-                             console.log("find device")
+                            console.log("find device")
                             // have to be more dynamic in the future
-                            fetch(`/api/plug/trigger/${target.deviceId}`, {
-                                method: "POST",
-                                headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify({ state: rule.action.state }),
-                            })
-                                .then(async (res) => {
-                                    const json = await res.json();
-                                    console.log("post")
-                                    if (json.result?.desc !== "Success") {
-                                        throw new Error(json.result?.desc);
-                                    }
-                                    updateDevice(target.deviceId, { state: rule.action.state });
+
+                            if (target.type == "SpeakerHub") {
+                                fetch(`/api/${target.type.toLowerCase()}/${target.deviceId}/action`)
+                                .then()
+                                .catch((e)=>console.error(e))
+                             }
+                            else {
+                                fetch(`/api/${target.type.toLowerCase()}/${target.deviceId}/action`, {
+                                    method: "POST",
+                                    headers: { "Content-Type": "application/json" },
+                                    body: JSON.stringify({ state: rule.action.state }),
                                 })
-                                .catch((e) => console.error(e));
+                                    .then(async (res) => {
+                                        const json = await res.json();
+                                        console.log("post")
+                                        if (json.result?.desc !== "Success") {
+                                            console.log(json.result?.desc)
+                                        }
+                                        updateDevice(target.deviceId, { state: rule.action.state });
+                                    })
+                                    .catch((e) => console.error(e));
+                            }
                         }
 
                     }
@@ -78,7 +86,7 @@ export default function Listener({ devices }: ListenerProps) {
         };
 
         return () => sse.close();
-    }, [updateDevice,rules,devices,enabled]);
+    }, [updateDevice, rules, devices, enabled]);
 
     return null;
 }

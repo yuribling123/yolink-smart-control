@@ -23,6 +23,11 @@ export default function Panel() {
       trigger: { event: "DoorSensor.Alert", state: "open" },
       action: { deviceType: "Outlet", state: "open" },
     });
+    addRule({
+      id: "door-open-speaker",
+      trigger: { event: "DoorSensor.Alert", state: "open" },
+      action: { deviceType: "SpeakerHub", state: "play" }, // 👈 adjust state as needed
+    });
 
   }
 
@@ -54,8 +59,8 @@ export default function Panel() {
           <h3 className="text-sm font-medium text-gray-700">Rules</h3>
           <span
             className={`px-2 py-1 text-xs rounded-full ${enabled
-                ? "bg-green-100 text-green-700"
-                : "bg-red-100 text-red-700"
+              ? "bg-green-100 text-green-700"
+              : "bg-red-100 text-red-700"
               }`}
           >
             {enabled ? "Automations Active" : "Automations Off"}
