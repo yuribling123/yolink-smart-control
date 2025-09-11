@@ -4,14 +4,16 @@ import { play } from "@/services/speakerHub/play";
 import { NextResponse } from "next/server";
 
 
-export async function GET(
+export async function POST(
   request: Request,
   context: { params: Promise<{ id: string }> }
 ) {
 
   try {
     const { id } = await context.params;
-    const result = await play(id);
+    const body = await request.json();
+    const message = body.state;
+    const result = await play(id,message);
 
     return NextResponse.json(result);
   } catch (e: any) {

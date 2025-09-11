@@ -20,7 +20,7 @@ const SpeakerHub = ({ deviceId, name }: SpeakerHubProps) => {
         setIsLoading(true)
         const res = await fetch(`/api/speakerhub/${deviceId}/state`);
         const json = await res.json();
-        
+
         if (json.code === "000201") { //off line or busy (020104)message
           setIsOnLine(false);
           return
@@ -43,7 +43,14 @@ const SpeakerHub = ({ deviceId, name }: SpeakerHubProps) => {
     try {
       setIsLoading(true);
 
-      const res = await fetch(`/api/speakerhub/${deviceId}/action`);
+      const res = await fetch(`/api/speakerhub/${deviceId}/action`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ state: "i am here!" }), // 👈 send message
+      });
+
+
+
       const json = await res.json();
 
       if (json.desc !== "Success") {

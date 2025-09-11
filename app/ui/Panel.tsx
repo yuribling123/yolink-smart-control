@@ -26,18 +26,14 @@ export default function Panel() {
     addRule({
       id: "door-open-speaker",
       trigger: { event: "DoorSensor.Alert", state: "open" },
-      action: { deviceType: "SpeakerHub", state: "play" }, // 👈 adjust state as needed
+      action: { deviceType: "SpeakerHub", state: "Welcome Home" }, // 👈 adjust state as needed
     });
-
-  }
-
-  // Add a test rule: Door open → turn plug on
-  function addDoorOpenRule() {
     addRule({
-      id: "door-open", // ✅ short name instead of nanoid
-      trigger: { event: "DoorSensor.Alert", state: "open" },
-      action: { deviceType: "Outlet", state: "open" },
+      id: "door-close-speaker",
+      trigger: { event: "DoorSensor.Alert", state: "closed" },
+      action: { deviceType: "SpeakerHub", state: "I Will Keep the House Safe" }, // 👈 adjust state as needed
     });
+
 
 
   }

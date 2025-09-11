@@ -53,27 +53,21 @@ export default function Listener({ devices }: ListenerProps) {
                             console.log("find device")
                             // have to be more dynamic in the future
 
-                            if (target.type == "SpeakerHub") {
-                                fetch(`/api/${target.type.toLowerCase()}/${target.deviceId}/action`)
-                                .then()
-                                .catch((e)=>console.error(e))
-                             }
-                            else {
-                                fetch(`/api/${target.type.toLowerCase()}/${target.deviceId}/action`, {
-                                    method: "POST",
-                                    headers: { "Content-Type": "application/json" },
-                                    body: JSON.stringify({ state: rule.action.state }),
+                            fetch(`/api/${target.type.toLowerCase()}/${target.deviceId}/action`, {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ state: rule.action.state }),
+                            })
+                                .then(async (res) => {
+                                    const json = await res.json();
+                                    console.log("post")
+                                    if (json.result?.desc !== "Success") {
+                                        console.log(json.result?.desc)
+                                    }
+                                    updateDevice(target.deviceId, { state: rule.action.state });
                                 })
-                                    .then(async (res) => {
-                                        const json = await res.json();
-                                        console.log("post")
-                                        if (json.result?.desc !== "Success") {
-                                            console.log(json.result?.desc)
-                                        }
-                                        updateDevice(target.deviceId, { state: rule.action.state });
-                                    })
-                                    .catch((e) => console.error(e));
-                            }
+                                .catch((e) => console.error(e));
+
                         }
 
                     }
