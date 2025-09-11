@@ -7,12 +7,6 @@ function initMqtt(send: (msg: string) => void) {
     client.on("connect", () => {
       send(JSON.stringify({ status: "mqtt_connected" }));
     });
-
-    // 🔴 MQTT error
-    client.on("error", (err) => {
-      send(JSON.stringify({ status: "mqtt_error", error: err.message }));
-    });
-
     // ⚪️ MQTT disconnected
     client.on("close", () => {
       send(JSON.stringify({ status: "mqtt_disconnected" }));
