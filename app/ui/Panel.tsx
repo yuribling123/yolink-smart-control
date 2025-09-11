@@ -2,13 +2,24 @@
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useAutomationStore } from "@/store/AutoStore";
+import { useDeviceStore } from "@/store/DeviceStore";
 import { HomeIcon, ZapIcon } from "lucide-react";
 
 
 export default function Panel() {
+
   const { enabled } = useAutomationStore();
   const { setEnabled } = useAutomationStore();
   const { addRule, rules, resetRules } = useAutomationStore();
+  const devices = useDeviceStore((s) => s.devices);
+  const sensor = Object.values(devices).find((d) => d.type === "THSensor");
+  const temperature = sensor?.state;
+  console.log("temp",temperature )
+  console.log("devices",devices )
+
+
+
+
 
 
   // Add a test rule: Door closed → turn plug off
@@ -26,7 +37,7 @@ export default function Panel() {
     addRule({
       id: "door-open-speaker",
       trigger: { event: "DoorSensor.Alert", state: "open" },
-      action: { deviceType: "SpeakerHub", state: "Welcome Home" }, // 👈 adjust state as needed
+      action: { deviceType: "SpeakerHub", state: `Welcome Home! Current temperature is ${temperature ?? "26"}°C`,}, // 👈 adjust state as needed
     });
     addRule({
       id: "door-close-speaker",
@@ -40,7 +51,7 @@ export default function Panel() {
 
   return (
 
-    <div className="w-80 h-[230px] flex flex-col m-6 bg-gradient-to-br from-gray-50 to-white border rounded-2xl p-3 shadow-md">
+    <div className="w-90 h-[230px] flex flex-col m-6 bg-gradient-to-br from-gray-50 to-white border rounded-2xl p-3 shadow-md">
       <div className="flex items-center justify-between">
         <h2 className="font-semibold text-gray-900 flex items-center gap-2">
           <HomeIcon size={18} /> Smart Home

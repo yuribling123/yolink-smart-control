@@ -2,6 +2,7 @@
 import Plug from "./Plug";
 import DoorSensor from "./DoorSensor";
 import SpeakerHub from "./SpeakerHub";
+import THSensor from "./THSensor";
 
 interface DeviceListProps {
     devices: any[];
@@ -49,6 +50,15 @@ const DeviceList = ({ devices }: DeviceListProps) => {
                                         name={device.name}
                                     />
                                 );
+                            case "THSensor":
+                                return(
+                                     <THSensor
+                                        key={device.deviceId}
+                                        deviceId={device.deviceId}
+                                        name={device.name}
+                                    />
+                                )
+
 
                             default:
                                 return null;

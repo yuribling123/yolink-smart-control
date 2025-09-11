@@ -3,10 +3,14 @@ import { getToken } from "../token";
 
 const API = process.env.YOLINK_API!;
 
-export async function play(deviceId: string, message: string) {
+export async function getState(deviceId: string) {
   const ACCESS_TOKEN = await getToken();
   const devList = await getDeviceList();
-  const device = devList.data.devices.find((d: any) => d.deviceId === deviceId);
+
+  // 🔍 Find the device by ID
+  const device = devList.data.devices.find(
+    (d: any) => d.deviceId === deviceId
+  );
 
   if (!device) {
     throw new Error(`Device with ID ${deviceId} not found`);
@@ -19,16 +23,10 @@ export async function play(deviceId: string, message: string) {
       Authorization: `Bearer ${ACCESS_TOKEN}`, // app-level JWT
     },
     body: JSON.stringify({
-      method: "SpeakerHub.playAudio",
+      method: "THSensor.getState",
       time: Date.now(),
       targetDevice: deviceId,
-      token: device.token,
-      params: {
-        tone: "Alert",
-        message,        // 👈 now dynamic
-        volume: 4,
-        repeat: 0,
-      },
+      token: device.token, // ✅ correct token for the device
     }),
   });
 
