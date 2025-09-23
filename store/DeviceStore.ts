@@ -9,8 +9,8 @@ import { persist } from "zustand/middleware";
 
 type DeviceState = {
   id: string;
-  type: string;         // "DoorSensor" | "Outlet"
-  state?: string;       // "open" | "closed"
+  type: string;
+  info: Record<string, any>;
 };
 
 type DeviceStore = {
@@ -18,6 +18,7 @@ type DeviceStore = {
   updateDevice: (id: string, data: Partial<DeviceState>) => void;
   reset: () => void;
 };
+//
 
 export const useDeviceStore = create<DeviceStore>()(
   persist(

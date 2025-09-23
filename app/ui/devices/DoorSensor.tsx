@@ -16,7 +16,7 @@ const DoorSensor = ({ deviceId, name }: DoorSensorProps) => {
   // pull device from Zustand store
   const device = useDeviceStore((s) => s.devices[deviceId]);
   const updateDevice = useDeviceStore((s) => s.updateDevice);
-  const open = device?.state === "open";  // "open" or "close"/"closed"
+  const open = device?.info?.state === "open";  // "open" or "close"/"closed"
 
 
   useEffect(() => {
@@ -32,7 +32,12 @@ const DoorSensor = ({ deviceId, name }: DoorSensorProps) => {
         }
         //online
         setIsOnLine(json.data?.online);
-        updateDevice(deviceId, { state: json.data?.state?.state });
+        updateDevice(deviceId, {
+          info: {
+            state: json.data?.state?.state,
+          },
+        });
+
 
       } finally {
         setIsLoading(false);
@@ -81,7 +86,7 @@ const DoorSensor = ({ deviceId, name }: DoorSensorProps) => {
 
         </>
       }
-      
+
     </div>
 
 

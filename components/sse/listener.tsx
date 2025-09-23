@@ -26,7 +26,9 @@ export default function Listener({ devices }: ListenerProps) {
 
                 //update Device Store
                 updateDevice(payload.deviceId, {
-                    state: payload.data?.state,
+                    info: {
+                        state: payload.data?.state
+                    }
                 });
                 //update Message Store
                 setMessage({
@@ -64,7 +66,12 @@ export default function Listener({ devices }: ListenerProps) {
                                     if (json.result?.desc !== "Success") {
                                         console.log(json.result?.desc)
                                     }
-                                    updateDevice(target.deviceId, { state: rule.action.state });
+                                    updateDevice(target.deviceId, {
+                                        info: {
+                                            state: rule.action.state,
+                                        },
+                                    });
+
                                 })
                                 .catch((e) => console.error(e));
 

@@ -18,7 +18,8 @@ export default function Plug({ deviceId, name }: PlugProps) {
     // pull device from Zustand store
     const device = useDeviceStore((s) => s.devices[deviceId]);
     const updateDevice = useDeviceStore((s) => s.updateDevice);
-    const open = device?.state === "open";  // "open" or "close"/"closed"
+    const open = device?.info?.state === "open";
+
 
 
     // check power and state
@@ -36,7 +37,12 @@ export default function Plug({ deviceId, name }: PlugProps) {
                 }
                 //online
                 setIsOnLine(true)
-                updateDevice(deviceId,{state:json.data.state })
+                updateDevice(deviceId, {
+                    info: {
+                        state: json.data.state,
+                    },
+                });
+
             } catch (err) {
                 console.log(err)
             }
@@ -62,7 +68,10 @@ export default function Plug({ deviceId, name }: PlugProps) {
                 if (json.result.desc != "Success") {
                     throw new Error(json.result.desc);
                 }
-                updateDevice(deviceId,{state: newState? "open" : "closed"})
+                updateDevice(deviceId, {
+                    info: { state: newState ? "open" : "closed" }
+                });
+
                 setIsOnLine(true)
                 toast.success(newState ? "Turned ON" : "Turned OFF");
             })

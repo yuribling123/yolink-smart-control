@@ -33,7 +33,14 @@ const THSensor = ({ deviceId, name }: THSensorProps) => {
         //online
         setIsOnLine(json.data?.online);
         console.log("th:", json.data)
-        updateDevice(deviceId, { state: json.data?.state?.temperature }); // double check 
+        updateDevice(deviceId, {
+          type: "THSensor",
+          info: {
+            state: json.data?.state?.state,
+            temperature: json.data?.state?.temperature,
+            humidity: json.data?.state?.humidity,
+          },
+        }); // double check 
 
       } finally {
         setIsLoading(false);
@@ -68,9 +75,9 @@ const THSensor = ({ deviceId, name }: THSensorProps) => {
             <p
               className="px-3 py-1 rounded-full text-xs font-medium border gap-2"
             >
-              <span>{device?.state}°C </span>
+              <span>{device?.info?.temperature}°C </span>
               <span className="text-gray-500 px-2">|</span>
-              <span>53.6%</span>
+              <span>{device?.info?.humidity}%</span>
 
             </p>
           ) : (
