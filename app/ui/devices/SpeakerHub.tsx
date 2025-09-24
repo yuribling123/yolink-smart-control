@@ -27,7 +27,7 @@ const SpeakerHub = ({ deviceId, name }: SpeakerHubProps) => {
         }
         setIsOnLine(true)
         setIsMute(json.data.options.mute)
-        console.log(json)
+    
       } catch (err) {
       }
       finally {

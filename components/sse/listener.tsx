@@ -38,21 +38,18 @@ export default function Listener({ devices }: ListenerProps) {
                 });
                 //load rules
                 // if (!enabled) return
-                console.log("now rule")
-                console.log("rules", rules)
-
+ 
 
                 if (!enabled) { return }
                 rules.forEach(
 
                     (rule) => {
-                        console.log("running rule")
-                        console.log("devices", devices)
+                   
                         if (rule.trigger.event == payload.event && rule.trigger.state == payload.data?.state) {
-                            console.log("match run rule")
+                          
                             const target = devices.find((d) => d.type === rule.action.deviceType)
                             if (!target) return
-                            console.log("find device")
+                          
                             // have to be more dynamic in the future
 
                             fetch(`/api/${target.type.toLowerCase()}/${target.deviceId}/action`, {
@@ -62,7 +59,7 @@ export default function Listener({ devices }: ListenerProps) {
                             })
                                 .then(async (res) => {
                                     const json = await res.json();
-                                    console.log("post")
+                                
                                     if (json.result?.desc !== "Success") {
                                         console.log(json.result?.desc)
                                     }

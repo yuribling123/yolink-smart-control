@@ -13,9 +13,9 @@ export default function Panel() {
   const { addRule, rules, resetRules } = useAutomationStore();
   const devices = useDeviceStore((s) => s.devices);
   const sensor = Object.values(devices).find((d) => d.type === "THSensor");
-  const temperature = sensor?.state;
-  console.log("temp",temperature )
-  console.log("devices",devices )
+  const temperature = sensor?.info?.state;
+  // console.log("temp",temperature )
+  // console.log("devices",devices )
 
 
 

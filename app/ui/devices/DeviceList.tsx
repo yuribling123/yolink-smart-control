@@ -3,6 +3,7 @@ import Plug from "./Plug";
 import DoorSensor from "./DoorSensor";
 import SpeakerHub from "./SpeakerHub";
 import THSensor from "./THSensor";
+import PowerFailureAlarm from "./PowerFailureAlarm";
 
 interface DeviceListProps {
     devices: any[];
@@ -38,7 +39,7 @@ const DeviceList = ({ devices }: DeviceListProps) => {
                                     <DoorSensor
                                         key={device.deviceId}
                                         deviceId={device.deviceId}
-                                        name={device.name}   
+                                        name={device.name}
                                     />
                                 );
 
@@ -51,8 +52,17 @@ const DeviceList = ({ devices }: DeviceListProps) => {
                                     />
                                 );
                             case "THSensor":
-                                return(
-                                     <THSensor
+                                return (
+                                    <THSensor
+                                        key={device.deviceId}
+                                        deviceId={device.deviceId}
+                                        name={device.name}
+                                    />
+                                )
+
+                            case "PowerFailureAlarm":
+                                return (
+                                    <PowerFailureAlarm
                                         key={device.deviceId}
                                         deviceId={device.deviceId}
                                         name={device.name}

@@ -18,7 +18,6 @@ export async function connectMqtt() {
 
     client.on('connect', function () {
         console.log('🟢 Connected')
-        // console.log(client);
     })
 
     client.subscribe(`yl-home/${homeId}/+/report`, (err) => {

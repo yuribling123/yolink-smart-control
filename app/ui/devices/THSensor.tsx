@@ -32,7 +32,7 @@ const THSensor = ({ deviceId, name }: THSensorProps) => {
         }
         //online
         setIsOnLine(json.data?.online);
-        console.log("th:", json.data)
+    
         updateDevice(deviceId, {
           type: "THSensor",
           info: {
