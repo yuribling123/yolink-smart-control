@@ -8,7 +8,7 @@ import PowerFailureAlarm from "./PowerFailureAlarm";
 interface DeviceListProps {
     devices: any[];
 }
-
+//date
 const DeviceList = ({ devices }: DeviceListProps) => {
     console.log(devices)
     return (
